@@ -31,6 +31,14 @@ class DatasetCatalog(object):
             "img_dir": "coco/val2014",
             "ann_file": "coco/annotations/instances_valminusminival2014.json"
         },
+        "bdd_seg_train": {
+            "img_dir": "bdd100k/seg/images/train",
+            "ann_file": "bdd100k/labels/seg_labels/train"
+        },
+        "bdd_seg_val": {
+            "img_dir": "bdd100k/seg/images/val",
+            "ann_file": "bdd100k/labels/seg_labels/val"
+        },
         "keypoints_coco_2014_train": {
             "img_dir": "coco/train2014",
             "ann_file": "coco/annotations/person_keypoints_train2014.json",
@@ -128,6 +136,17 @@ class DatasetCatalog(object):
             )
             return dict(
                 factory="PascalVOCDataset",
+                args=args,
+            )
+        elif "bdd" in name:
+            data_dir = DatasetCatalog.DATA_DIR
+            attrs = DatasetCatalog.DATASETS[name]
+            args = dict(
+                root=os.path.join(data_dir, attrs["img_dir"]),
+                ann_file=os.path.join(data_dir, attrs["ann_file"]),
+            )
+            return dict(
+                factory="BDD100KSegDataset",
                 args=args,
             )
         raise RuntimeError("Dataset not available: {}".format(name))

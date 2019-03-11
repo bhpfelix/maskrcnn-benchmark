@@ -2,6 +2,7 @@
 import datetime
 import logging
 import time
+import os
 
 import torch
 import torch.distributed as dist
@@ -53,7 +54,7 @@ def do_train(
     model.train()
     start_training_time = time.time()
     end = time.time()
-    for iteration, (images, targets, _) in enumerate(data_loader, start_iter):
+    for iteration, (images, targets, idx) in enumerate(data_loader, start_iter):
         data_time = time.time() - end
         iteration = iteration + 1
         arguments["iteration"] = iteration
@@ -74,6 +75,25 @@ def do_train(
 
         optimizer.zero_grad()
         losses.backward()
+
+        grad_limit = 200.
+        cummulated_grad = 0
+        with open(os.path.join(checkpointer.save_dir, 'log_grad.txt'), 'a') as f:
+            for p in list(filter(lambda p: p.grad is not None, model.parameters())):
+                cummulated_grad += p.grad.data.norm(2).item()
+            if iteration < 500 or cummulated_grad > grad_limit:
+                f.write('Iteration {} '.format(str(iteration).zfill(7)))
+                for image_id in idx:
+                    f.write('  {} '.format(data_loader.dataset.id_to_img_map[image_id]))
+                f.write('loss: {} grad {}\n'.format(str(losses.data.norm(2).item()), str(cummulated_grad))) 
+
+        if iteration > 500 and cummulated_grad > grad_limit:
+            torch.nn.utils.clip_grad_norm_(model.parameters(), grad_limit)
+
+        if losses != losses:
+            print('NaN encountered!')
+            time.sleep(100000)
+
         optimizer.step()
 
         batch_time = time.time() - end
