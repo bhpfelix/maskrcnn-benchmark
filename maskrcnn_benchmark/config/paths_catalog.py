@@ -31,6 +31,66 @@ class DatasetCatalog(object):
             "img_dir": "coco/val2014",
             "ann_file": "coco/annotations/instances_valminusminival2014.json"
         },
+        "bdd_det_train": {
+            "img_dir": "bdd100k/images/100k/train",
+            "ann_file": "bdd100k/labels/bdd100k_labels_images_train_coco.json"
+        },
+        "bdd_det_val": {
+            "img_dir": "bdd100k/images/100k/val",
+            "ann_file": "bdd100k/labels/bdd100k_labels_images_val_coco.json"
+        },
+        "bdd_seg_train": {
+            "img_dir": "bdd100k/seg/images/train",
+            "ann_file": "bdd100k/labels/seg_labels/bdd_seg_train.json"
+        },
+        "bdd_seg_val": {
+            "img_dir": "bdd100k/seg/images/val",
+            "ann_file": "bdd100k/labels/seg_labels/bdd_seg_val.json"
+        },
+        "bdd_seg_test": {
+            "img_dir": "bdd100k/seg/images/test",
+            "ann_file": "bdd100k/labels/seg_labels/bdd_seg_test.json"
+        },
+        "bdd_seg_test_person": {
+            "img_dir": "bdd100k/seg/images/test",
+            "ann_file": "bdd100k/labels/seg_labels/bdd_seg_test_person.json"
+        },
+        "bdd_seg_test_rider": {
+            "img_dir": "bdd100k/seg/images/test",
+            "ann_file": "bdd100k/labels/seg_labels/bdd_seg_test_rider.json"
+        },
+        "bdd_seg_test_car": {
+            "img_dir": "bdd100k/seg/images/test",
+            "ann_file": "bdd100k/labels/seg_labels/bdd_seg_test_car.json"
+        },
+        "bdd_seg_test_bus": {
+            "img_dir": "bdd100k/seg/images/test",
+            "ann_file": "bdd100k/labels/seg_labels/bdd_seg_test_bus.json"
+        },
+        "bdd_seg_test_truck": {
+            "img_dir": "bdd100k/seg/images/test",
+            "ann_file": "bdd100k/labels/seg_labels/bdd_seg_test_truck.json"
+        },
+        "bdd_seg_test_bike": {
+            "img_dir": "bdd100k/seg/images/test",
+            "ann_file": "bdd100k/labels/seg_labels/bdd_seg_test_bike.json"
+        },
+        "bdd_seg_test_motor": {
+            "img_dir": "bdd100k/seg/images/test",
+            "ann_file": "bdd100k/labels/seg_labels/bdd_seg_test_motor.json"
+        },
+        "bdd_seg_test_traffic_light": {
+            "img_dir": "bdd100k/seg/images/test",
+            "ann_file": "bdd100k/labels/seg_labels/bdd_seg_test_traffic_light.json"
+        },
+        "bdd_seg_test_traffic_sign": {
+            "img_dir": "bdd100k/seg/images/test",
+            "ann_file": "bdd100k/labels/seg_labels/bdd_seg_test_traffic_sign.json"
+        },
+        "bdd_seg_test_train": {
+            "img_dir": "bdd100k/seg/images/test",
+            "ann_file": "bdd100k/labels/seg_labels/bdd_seg_test_train.json"
+        },
         "keypoints_coco_2014_train": {
             "img_dir": "coco/train2014",
             "ann_file": "coco/annotations/person_keypoints_train2014.json",
@@ -108,7 +168,7 @@ class DatasetCatalog(object):
 
     @staticmethod
     def get(name):
-        if "coco" in name:
+        if "coco" in name or "bdd" in name:
             data_dir = DatasetCatalog.DATA_DIR
             attrs = DatasetCatalog.DATASETS[name]
             args = dict(
@@ -130,6 +190,17 @@ class DatasetCatalog(object):
                 factory="PascalVOCDataset",
                 args=args,
             )
+        # elif "bdd" in name:
+        #     data_dir = DatasetCatalog.DATA_DIR
+        #     attrs = DatasetCatalog.DATASETS[name]
+        #     args = dict(
+        #         root=os.path.join(data_dir, attrs["img_dir"]),
+        #         ann_file=os.path.join(data_dir, attrs["ann_file"]),
+        #     )
+        #     return dict(
+        #         factory="BDD100KSegDataset",
+        #         args=args,
+        #     )
         raise RuntimeError("Dataset not available: {}".format(name))
 
 
